@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching_Hangfire", "Caching_Hangfire\Caching_Hangfire.csproj", "{26E074FD-53CD-43DB-A2DA-742505250641}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{26E074FD-53CD-43DB-A2DA-742505250641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26E074FD-53CD-43DB-A2DA-742505250641}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26E074FD-53CD-43DB-A2DA-742505250641}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26E074FD-53CD-43DB-A2DA-742505250641}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {03FDC6BD-5665-4B1A-9510-3A55B1992E98}
+	EndGlobalSection
+EndGlobal
