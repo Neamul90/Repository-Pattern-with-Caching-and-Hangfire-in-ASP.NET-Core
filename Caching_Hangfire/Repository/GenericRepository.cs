@@ -8,7 +8,7 @@ namespace Caching_Hangfire.Repository
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly static CacheTech cacheTech = CacheTech.Memory;
+        private readonly static CacheTech cacheTech = CacheTech.Redis;
         private readonly string cacheKey = $"{typeof(T)}";
         private readonly ApplicationDbContext _dbContext;
         private readonly Func<CacheTech, ICacheService> _cacheService;

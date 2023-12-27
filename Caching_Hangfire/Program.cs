@@ -4,9 +4,25 @@ using Caching_Hangfire.Interface;
 using Caching_Hangfire.Repository;
 using Caching_Hangfire.Services;
 using Hangfire;
+using HealthChecks.UI.Client;
+using MassTransit;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,6 +36,13 @@ options.UseSqlServer(builder.
                        Configuration.GetConnectionString("DefaultConnection"),
                        b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 builder.Services.Configure<CacheConfiguration>(builder.Configuration.GetSection("CacheConfiguration"));
+// Redis Configuration
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetValue<string>("CacheSettings:ConnectionString");
+    options.InstanceName = "GamesCatalog_";
+
+});
 builder.Services.AddMemoryCache();
 builder.Services.AddTransient<MemoryCacheService>();
 builder.Services.AddTransient<RedisCacheService>();
@@ -37,6 +60,21 @@ builder.Services.AddTransient<Func<CacheTech, ICacheService>>(serviceProvider =>
 });
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHangfireServer();
+
+
+//MassTransit - RabbitMQ Configuration
+//builder.Services.AddMassTransit(config =>
+//{
+//    config.UsingRabbitMq((ctx, cfg) =>
+//    {
+//        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+//        cfg.UseHealthCheck(ctx);
+//    });
+//});
+//builder.Services.AddMassTransitHostedService();
+builder.Services.AddHealthChecks()
+                    .AddRedis(builder.Configuration["CacheSettings:ConnectionString"], "Redis Health", HealthStatus.Degraded);
+
 #region Repositories
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
@@ -51,9 +89,17 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHangfireDashboard("/jobs");
 app.UseHttpsRedirection();
-
+app.MapControllers();
 app.UseAuthorization();
 
-app.MapControllers();
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//    endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+//    {
+//        Predicate = _ => true,
+//        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+//    });
+//});
 
 app.Run();

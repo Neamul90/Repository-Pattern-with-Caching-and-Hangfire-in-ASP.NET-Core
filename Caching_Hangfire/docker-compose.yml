@@ -1,0 +1,33 @@
+version: '3.12'
+services:
+  rabbitmq:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.12-management-alpine
+    environment:
+        - RABBITMQ_DEFAULT_USER=user    
+        - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+    #Rabbitmq instance
+        - '5672:5672'
+    #Web interface
+        - '15672:15672'
+  redis:
+        image: redis:6.0.7
+        container_name: redis
+        restart: always
+        volumes:
+        - redis_volume_data:/data
+        ports:
+        - 6379:6379
+  redis_insight:
+        image: redislabs/redisinsight:latest
+        container_name: redis_insight
+        restart: always
+        ports:
+        - 8001:8001
+        volumes:
+        - redis_insight_volume_data:/db
+volumes:
+  redis_volume_data:
+  redis_insight_volume_data:
+  
